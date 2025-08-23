@@ -31,7 +31,20 @@
 ##### 1.2.4.1 EventLoop
 ##### 1.2.4.2 DOM
 
-### 1.3 JavaScript и TypeScript, HTML, CSS
+### 1.3 JavaScript и TypeScript
+#### 1.3.1 [JavaScript](pyramid/JavaScript and TypeScript/JavaScript.md)
+##### 1.3.1.1 Механизм замыканий
+##### 1.3.1.2 Механизм передачи контекста в функции 
+##### 1.3.1.3 Прототипное наследование
+##### 1.3.1.4 TC39 process
+##### 1.3.1.5 Асинхронность
+#### 1.3.2 [TypeScript](pyramid/JavaScript and TypeScript/TypeScript.md)
+##### 1.3.2.1 Виды типизации и их отличия
+##### 1.3.2.2 Что такое интерфейсы и type-алиасы? Отличия и когда использовать
+##### 1.3.2.3 Тайпгарды
+##### 1.3.2.4 Union and intersections типы
+##### 1.3.2.5 Const assertion and Enum
+##### 1.3.2.6 Встроенные утилитарные типы
 
 ### 1.4 UI frameworks
 #### 1.4.1 React
