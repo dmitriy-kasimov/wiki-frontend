@@ -254,3 +254,139 @@ Event loop не является частью JS. В `Chromium` (браузер�
 * Работа с файловой системой
 
 ### 1.2.4.1 DOM
+**Выбор элементов**
+![img.png](img.png)
+
+```` HTML
+<p id="special">Параграф с id</p>
+<div class="item">Элемент 1</div>
+<div class="item">Элемент 2</div>
+````
+
+```` JS
+// Выбор элементов
+const specialParagraph = document.getElementById('special');
+const firstItem = document.querySelector('.item'); // Найдет "Элемент 1"
+const allItems = document.querySelectorAll('.item'); // Найдет коллекцию [Элемент 1, Элемент 2]
+const allDivs = document.getElementsByTagName('div'); // Также найдет оба div
+````
+**Навигация по DOM**
+![img_1.png](img_1.png)
+
+```` HTML
+<ul id="list">
+  <li>Пункт 1</li>
+  <li class="selected">Пункт 2</li>
+  <li>Пункт 3</li>
+</ul>
+````
+
+```` JS
+const selectedItem = document.querySelector('.selected');
+const parentList = selectedItem.parentElement; // <ul id="list"> ... </ul>
+const nextItem = selectedItem.nextElementSibling; // <li>Пункт 3</li>
+const firstChild = parentList.firstElementChild; // <li>Пункт 1</li>
+````
+
+**Манипуляция содержимым и аттрибутами**
+
+Содержимое:
+* `element.textContent` – получает или задает простой текст внутри элемента (включая скрытый). Без HTML-тегов.
+* `element.innerHTML` – получает или задает HTML-разметку внутри элемента. Позволяет вставлять новые теги.
+
+Атрибуты (например, src, href, alt, data-*):
+* `element.getAttribute(name)` – получить значение атрибута.
+* `element.setAttribute(name, value)` – установить значение атрибута.
+* `element.hasAttribute(name)` – проверить наличие атрибута.
+* `element.removeAttribute(name)` – удалить атрибут.
+* `element.classList` – специальный объект для удобной работы с классами:
+  * `classList.add('class')` – добавить класс.
+  * `classList.remove('class')` – удалить класс.
+  * `classList.toggle('class')` – переключить класс (добавить, если нет; удалить, если есть).
+  * `classList.contains('class')` – проверить наличие класса.
+
+```` HTML
+<img src="old.jpg" alt="Старое изображение" class="pic">
+<div id="content"></div>
+````
+
+```` JS
+const img = document.querySelector('img');
+const div = document.getElementById('content');
+
+// Меняем атрибуты
+img.setAttribute('src', 'new.jpg'); // Изменили src на "new.jpg"
+img.alt = 'Новое изображение'; // Можно и так (для стандартных атрибутов)
+
+// Работа с классами
+img.classList.add('rounded'); // Добавили класс 'rounded'
+img.classList.remove('pic');   // Удалили класс 'pic'
+
+// Меняем содержимое
+div.textContent = 'Какой-то текст'; // Безопасно, теги экранируются
+div.innerHTML = '<strong>Жирный</strong> текст'; // Теги будут вставлены как HTML
+````
+
+**Стилизация**
+
+Прямое изменение стилей через JS (inline-стили).
+
+`element.style.property` – получить или установить конкретное свойство. Имена свойств записываются в camelCase (`backgroundColor`, `fontSize`).
+```` JS
+const box = document.querySelector('.box');
+
+box.style.backgroundColor = 'red'; // Не 'background-color'
+box.style.width = '100px';
+box.style.marginTop = '20px';
+
+// Полное сброс/перезапись стилей
+box.style.cssText = 'color: blue; padding: 10px;'; // Будет только color и padding
+````
+
+**Создание, добавление и удаление элементов**
+
+Сценарий, когда нужно динамически добавить или убрать элемент со страницы.
+
+1. Создать: `document.createElement(tagName)`
+
+2. Настроить: Добавить ему классы, атрибуты, содержимое.
+
+3. Добавить в DOM: Выбрать родительский элемент и использовать метод добавления.
+   * `parent.appendChild(element)` – добавить элемент в конец родителя.
+   * `parent.insertBefore(newElement, referenceElement)` – вставить новый элемент перед указанным.
+   * `parent.replaceChild(newChild, oldChild)` – заменить один дочерний элемент на другой.
+
+4. Удалить:
+   * `element.remove()` – современный метод, удаляет элемент из DOM.
+   * `parent.removeChild(element)` – классический метод.
+
+```` HTML
+<ul id="myList">
+  <li>Пункт 1</li>
+  <li>Пункт 2</li>
+</ul>
+````
+
+```` JS
+const list = document.getElementById('myList');
+
+// 1. Создаем новый элемент <li>
+const newListItem = document.createElement('li');
+// 2. Настраиваем его
+newListItem.textContent = 'Новый пункт!';
+newListItem.classList.add('important');
+
+// 3. Добавляем в DOM (в конец списка)
+list.appendChild(newListItem);
+
+// Добавим еще один элемент в начало списка
+const firstItem = list.querySelector('li');
+const anotherListItem = document.createElement('li');
+anotherListItem.textContent = 'Я первый!';
+list.insertBefore(anotherListItem, firstItem);
+
+// Удаляем второй элемент
+const secondItem = list.children[1]; // Индекс 1 (второй элемент)
+secondItem.remove(); // Современный способ
+// list.removeChild(secondItem); // Классический способ
+````
