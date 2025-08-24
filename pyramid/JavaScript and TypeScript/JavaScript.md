@@ -139,6 +139,87 @@ boundedIntroduce.call(person1, 30, 'Kiev') // Hello, my name is Bob, 25 years ol
 
 **Прототипное наследование** — это механизм, при котором объекты могут наследовать свойства и методы от других объектов-прототипов. В отличие от классического наследования (как в Java/C++), в JavaScript наследование реализуется через цепочку прототипов.
 
+Доступ к прототипу через свойство `__proto__`
 ## 1.3.1.4 TC39 process
 
+* Stage 1: Proposal - Формальное предложение
+* Stage 2: Draft - Черновик спецификации
+* Stage 3: Candidate - Кандидат
+* Stage 4: Finished - Завершено
+
+### Частота выпусков
+Ежегодный цикл: Новые features добавляются в спецификацию ECMAScript каждый год в июне.
+
+* ES2015 (ES6): Классы, промисы, стрелочные функции
+* ES2016: `Array.prototype.includes`, оператор `**`
+* ES2017: `async`/`await`, `Object.values()`, `Object.entries()`
+* ES2018: Rest/Spread properties, `Promise.finally()`
+* ES2019: `Array.flat()`, `Object.fromEntries()`
+* ES2020: Optional chaining (`?.`), Nullish coalescing (`??`)
+* ES2021: `String.replaceAll()`, Logical assignment (`||=`, `&&=`, `??=`)
+* ES2022: Top-level `await`, `.at()` method, Class fields
+* ES2023: `Array.findLast()`, `Array.findLastIndex()`
+* ES2024: Новые типы данных `Tuple` и `Record`, Decorators
+* ES2025: импорт JSON как полноценного модуля, без fetch/axios/require; Set 2.0: `.union()`, `.intersection()`, `.difference()`, `.isSubsetOf()`
 ## 1.3.1.5 Асинхронность
+### `requestAnimationFrame` (rAF)
+
+Это инструмент для создания плавных анимаций и любых визуальных обновлений. 
+
+`requestAnimationFrame(fn)` вызывает fn перед каждой перерисовкой кадра.
+
+**Базовый паттерн использования**
+
+Запуск анимации
+``` JS
+function animate() {
+  // ... код, который изменяет стили/свойства ...
+  element.style.left = newPosition + 'px';
+
+  // Запрашиваем СЛЕДУЮЩИЙ кадр анимации!
+  requestAnimationFrame(animate);
+}
+
+// ЗАПУСК анимации
+requestAnimationFrame(animate);
+```
+
+Остановка анимации
+``` JS
+let animationId;
+
+function startAnimation() {
+  // ...
+  animationId = requestAnimationFrame(animate);
+}
+
+function stopAnimation() {
+  cancelAnimationFrame(animationId);
+}
+
+```
+
+**Ключевой параметр:** `timestamp`
+
+Функция-колбэк, которую вы передаете в `rAF`, автоматически получает один аргумент — `timestamp` (метка времени). Это высокоточное значение (в миллисекундах), равное тому, что возвращает `performance.now()`.
+Чтобы вычислять дельту времени между кадрами. Это критически важно для создания независимых от частоты кадров анимаций.
+
+``` JS
+let lastTime = 0;
+const speed = 200; // пикселей в секунду
+
+function animate(timestamp) {
+  // Вычисляем, сколько времени прошло с прошлого кадра
+  const deltaTime = timestamp - lastTime;
+  lastTime = timestamp;
+
+  // Сдвигаем элемент на расстояние, зависящее от времени, а не от кадров
+  // (200 px/sec * deltaTime in seconds) = (200 * (deltaTime / 1000))
+  element.x += speed * (deltaTime / 1000);
+
+  requestAnimationFrame(animate);
+}
+
+requestAnimationFrame(animate);
+```
+Теперь блок будет двигаться со скоростью 200 пикселей в секунду на любом устройстве, независимо от того, работает оно на 30 FPS или на 144 FPS.
