@@ -390,3 +390,156 @@ const secondItem = list.children[1]; // Индекс 1 (второй элеме�
 secondItem.remove(); // Современный способ
 // list.removeChild(secondItem); // Классический способ
 ````
+---
+
+`template` - это механизм для хранения HTML-кода, который не отображается сразу на странице, но может быть использован позже с помощью JavaScript. Используется в WebComponents. 
+
+Защита от XSS, быстрее `innerHTML`
+
+---
+
+`documentFragment` — это легковесный контейнер для DOM-узлов, который не является частью основного DOM-дерева. Можно использовать в случаях, когда хочется не плодить лишние ноды
+
+---
+
+**Разница между атрибутом и свойством**
+
+Атрибут (Attribute) — это то, что написано в HTML
+``` HTML
+<input id="user" class="input" type="text" value="Иван" data-custom="info">
+<!-- ^ все это атрибуты -->
+```
+
+Свойство (Property) — это то, что доступно в JavaScript
+``` JS
+const input = document.getElementById('user');
+console.log(input.value);    // Свойство
+console.log(input.id);       // Свойство
+console.log(input.className); // Свойство
+```
+
+---
+
+**Управление CSS через JS**
+
+Прямое изменение стилей
+``` JS
+const element = document.getElementById('myElement');
+
+// Изменение отдельных свойств
+element.style.color = 'red';
+element.style.backgroundColor = '#fff';
+element.style.fontSize = '16px';
+element.style.display = 'block';
+```
+Через классы
+``` JS
+const element = document.querySelector('.my-element');
+
+// Добавить класс
+element.classList.add('active', 'highlight');
+
+// Удалить класс
+element.classList.remove('hidden', 'inactive');
+
+// Переключить класс
+element.classList.toggle('active'); // добавит если нет, удалит если есть
+
+// Проверить наличие класса
+const isActive = element.classList.contains('active');
+```
+Получение вычисленных стилей через `getComputedStyle`
+``` JS
+const element = document.querySelector('.my-element');
+
+// Получить все вычисленные стили
+const computedStyle = getComputedStyle(element);
+
+// Получить конкретные свойства
+const width = computedStyle.width;
+const height = computedStyle.height;
+const color = computedStyle.color;
+const fontSize = computedStyle.fontSize;
+
+console.log(`Element width: ${width}, color: ${color}`);
+```
+Разница между `style` и `getComputedStyle`
+``` JS
+// HTML: <div style="color: red;" class="text"></div>
+// CSS: .text { font-size: 16px; }
+
+const element = document.querySelector('.text');
+
+// style - только inline
+console.log(element.style.color);      // "red"
+console.log(element.style.fontSize);   // ""
+
+// getComputedStyle - все стили
+console.log(getComputedStyle(element).color);    // "rgb(255, 0, 0)" 
+console.log(getComputedStyle(element).fontSize); // "16px"
+```
+
+---
+
+**DOM события**
+
+Фазы распространения событий:
+1. Capture phase (сверху вниз, от `window` к target)
+2. Target phase (событие достигло целевого элемента)
+3. Bubble phase (от target к `window`)
+
+Управление распространением событий:
+* `event.stopPropagation()` - Останавливает распространение на этапе всплытия (Bubble phase)
+* `event.stopImmediatePropagation()` - Устанавливается в обработчике, останавливает все другие обработчики
+* `event.preventDefault()` - предотвратить поведение браузера по умолчанию
+
+**Делегирование событий в DOM**
+``` JS
+// Вместо этого (плохо для динамических элементов):
+document.querySelectorAll('.item').forEach(item => {
+  item.addEventListener('click', handler);
+});
+
+// Используйте это (хорошо):
+document.getElementById('container').addEventListener('click', function(event) {
+  if (event.target.classList.contains('item')) {
+    handler(event);
+  }
+});
+```
+
+---
+
+**Кастомные события**
+
+Кастомные события — это механизм для создания и dispatch'а собственных событий в JavaScript. Они позволяют компонентам общаться друг с другом через стандартный event system.
+``` JS
+// Создание события
+const event = new CustomEvent('myEvent', {
+  detail: { message: 'Hello World!', data: 42 },
+  bubbles: true,
+  cancelable: true
+});
+
+// Dispatch события
+element.dispatchEvent(event);
+
+// Прослушивание события
+element.addEventListener('myEvent', function(event) {
+  console.log(event.detail.message); // "Hello World!"
+  console.log(event.detail.data);    // 42
+});
+```
+
+---
+
+**HTML5 валидация**
+
+Благодаря функции проверки ограничений в HTML5, мы можем выполнить все стандартные задачи проверки входных данных на стороне клиента без JavaScript, исключительно с HTML5.
+
+Используются следующие семантические аттрибуты:
+* `required`
+* `maxlength`
+* `max` / `min`
+* `step`
+* `pattern`
